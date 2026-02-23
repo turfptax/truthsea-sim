@@ -48,10 +48,10 @@ output/             # Generated PNGs and CSVs from scenarios
 ```
 
 ## Data Model
-- **chain_definition** — 29 chains (20 science + 9 foundational) across 20 disciplines
-- **chain_node** — 208 quanta + 57 alternatives (layer -1). Each has 4 pillar scores (0-100), 8 moral vector dimensions, intrinsic/chain scores
-- **evidence_source** — 577 evidence items linked to quanta
-- **chain_edge** — 261 DAG edges (depends, supports, contradicts)
+- **chain_definition** — 30 chains (20 science + 10 foundational) across 21 disciplines
+- **chain_node** — 216 quanta + 59 alternatives (layer -1). Each has 4 pillar scores (0-100), 8 moral vector dimensions, intrinsic/chain scores
+- **evidence_source** — 593 evidence items linked to quanta
+- **chain_edge** — 275 DAG edges (depends, supports, contradicts)
 - **agent** — simulation agents with stake, reputation, accuracy tracking
 - **verification** — agent verdicts (accept/reject/flag) per quanta per round
 - **simulation_run** — run config + summary JSON
@@ -106,7 +106,7 @@ Data format follows the agent-toolkit schema (see `../TruthSea/agent-toolkit/SCH
 Import uses upsert — re-importing updated data overwrites existing records.
 
 ## Foundational Chains
-9 foundational chains forming the epistemological and scientific bedrock:
+10 foundational chains forming the epistemological and scientific bedrock:
 
 **Epistemological bedrock (4 chains):**
 - **epistemic_foundations** — external world, logic, perception, induction, JTB
@@ -120,6 +120,9 @@ Import uses upsert — re-importing updated data overwrites existing records.
 - **calculus_foundations** — real numbers, limits, derivatives, integration, fundamental theorem
 - **empirical_measurement** — SI units, measurement uncertainty, reproducibility, radiometric dating, historical record
 - **logic_and_proof** — propositional logic, predicate logic, proof by contradiction, mathematical induction, completeness
+
+**Chronological spine (1 chain):**
+- **deep_time** — Big Bang (13.8 Gyr), solar system (4.567 Gyr), earliest life (3.5 Gyr), Cambrian explosion (541 Myr), K-Pg extinction (66 Myr), human emergence (300 kyr), Neolithic revolution (12 kyr). Cross-links universe_age, earth_age, evolution, mass_extinctions, and empirical_measurement chains.
 
 Axioms (e.g. "external world exists") score naturally: low correspondence (~15, can't empirically prove), high coherence/pragmatism (~85-95). The lens system reveals sensitivity — a scientist lens penalizes axioms more.
 Cross-chain dependencies link chains together (e.g. classical_mechanics.force_acceleration depends on calculus_foundations.derivatives and physical_reality.causality).

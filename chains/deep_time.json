@@ -1,0 +1,44 @@
+{
+  "id": "deep_time",
+  "name": "Deep Time Chronology",
+  "discipline": "Geochronology / History",
+  "crownClaim": "A continuous, evidence-based chronology from the Big Bang to modern civilization is established by converging radiometric, geological, biological, and historical evidence",
+  "nodes": [
+    "deep_time.cosmic_origin",
+    "deep_time.solar_system_formation",
+    "deep_time.earliest_life",
+    "deep_time.cambrian_explosion",
+    "deep_time.kpg_extinction",
+    "deep_time.human_emergence",
+    "deep_time.neolithic_revolution",
+    "deep_time.deep_time_crown"
+  ],
+  "edges": [
+    {"source": "deep_time.cosmic_origin", "target": "deep_time.solar_system_formation", "type": "depends"},
+    {"source": "deep_time.solar_system_formation", "target": "deep_time.earliest_life", "type": "depends"},
+    {"source": "deep_time.earliest_life", "target": "deep_time.cambrian_explosion", "type": "depends"},
+    {"source": "deep_time.cambrian_explosion", "target": "deep_time.kpg_extinction", "type": "depends"},
+    {"source": "deep_time.kpg_extinction", "target": "deep_time.human_emergence", "type": "depends"},
+    {"source": "deep_time.human_emergence", "target": "deep_time.neolithic_revolution", "type": "depends"},
+    {"source": "deep_time.neolithic_revolution", "target": "deep_time.deep_time_crown", "type": "depends"},
+    {"source": "deep_time.kpg_extinction", "target": "deep_time.deep_time_crown", "type": "depends"},
+    {"source": "universe_age.universe_age", "target": "deep_time.cosmic_origin", "type": "depends"},
+    {"source": "earth_age.earth_age_crown", "target": "deep_time.solar_system_formation", "type": "depends"},
+    {"source": "empirical_measurement.radiometric_dating", "target": "deep_time.earliest_life", "type": "depends"},
+    {"source": "evolution.fossil_record", "target": "deep_time.cambrian_explosion", "type": "depends"},
+    {"source": "mass_extinctions.chicxulub_crater", "target": "deep_time.kpg_extinction", "type": "depends"},
+    {"source": "evolution.hominid_fossils", "target": "deep_time.human_emergence", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "deep_time.alt_young_earth_chronology",
+      "replacesNodeId": "deep_time.deep_time_crown",
+      "claim": "Earth and universe are approximately 6,000-10,000 years old based on biblical genealogies and a literal reading of Genesis"
+    },
+    {
+      "id": "deep_time.alt_steady_state",
+      "replacesNodeId": "deep_time.cosmic_origin",
+      "claim": "The universe has no beginning; matter is continuously created to maintain constant density as the universe expands (Hoyle's steady-state cosmology)"
+    }
+  ]
+}
