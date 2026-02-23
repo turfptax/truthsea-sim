@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TruthDAG Visualizer</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- Left Sidebar -->
+  <aside id="sidebar">
+    <header>
+      <h1>TruthDAG</h1>
+      <p id="graph-stats">Loading...</p>
+    </header>
+
+    <section class="panel">
+      <h2>Propagation</h2>
+      <label>
+        Damping <span id="val-damping" class="val">0.70</span>
+        <input type="range" id="sl-damping" min="0" max="1" step="0.05" value="0.70" />
+      </label>
+      <label>
+        Floor <span id="val-floor" class="val">0.30</span>
+        <input type="range" id="sl-floor" min="0" max="1" step="0.05" value="0.30" />
+      </label>
+      <label>
+        Contradiction Penalty <span id="val-penalty" class="val">0.15</span>
+        <input type="range" id="sl-penalty" min="0" max="0.5" step="0.01" value="0.15" />
+      </label>
+    </section>
+
+    <section class="panel">
+      <h2>Pillar Weights <span id="weight-sum" class="val">1.00</span></h2>
+      <label>
+        Correspondence <span id="val-w-corr" class="val">0.30</span>
+        <input type="range" id="sl-w-corr" min="0" max="1" step="0.05" value="0.30" />
+      </label>
+      <label>
+        Coherence <span id="val-w-coh" class="val">0.25</span>
+        <input type="range" id="sl-w-coh" min="0" max="1" step="0.05" value="0.25" />
+      </label>
+      <label>
+        Convergence <span id="val-w-conv" class="val">0.25</span>
+        <input type="range" id="sl-w-conv" min="0" max="1" step="0.05" value="0.25" />
+      </label>
+      <label>
+        Pragmatism <span id="val-w-prag" class="val">0.20</span>
+        <input type="range" id="sl-w-prag" min="0" max="1" step="0.05" value="0.20" />
+      </label>
+    </section>
+
+    <section class="panel">
+      <h2>Lens Preset</h2>
+      <select id="lens-select">
+        <option value="custom" selected>Custom</option>
+        <option value="blank">Blank Slate</option>
+        <option value="scientist">Scientist</option>
+        <option value="religious">Religious</option>
+        <option value="ea">Effective Altruist</option>
+        <option value="libertarian">Libertarian</option>
+      </select>
+    </section>
+
+    <section class="panel">
+      <h2>Chains</h2>
+      <div id="chain-filters"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Layers</h2>
+      <div id="layer-filters">
+        <label><input type="checkbox" data-layer="0" checked /> Foundation</label>
+        <label><input type="checkbox" data-layer="1" checked /> Method</label>
+        <label><input type="checkbox" data-layer="2" checked /> Inference</label>
+        <label><input type="checkbox" data-layer="3" checked /> Crown</label>
+      </div>
+    </section>
+
+    <section class="panel metrics">
+      <h2>Metrics</h2>
+      <div id="metrics-display">
+        <div>Avg: <span id="metric-avg">-</span></div>
+        <div>Min: <span id="metric-min">-</span></div>
+        <div>Max: <span id="metric-max">-</span></div>
+      </div>
+    </section>
+  </aside>
+
+  <!-- 3D Graph Canvas -->
+  <main id="graph-container"></main>
+
+  <!-- Right Detail Panel -->
+  <aside id="detail-panel" class="hidden">
+    <button id="detail-close">&times;</button>
+    <div id="detail-content"></div>
+  </aside>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

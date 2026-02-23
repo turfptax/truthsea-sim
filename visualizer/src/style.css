@@ -1,0 +1,357 @@
+/* TruthDAG Visualizer — Dark theme matching dashboard */
+
+:root {
+  --bg: #060c18;
+  --sidebar-bg: #0d1a2e;
+  --detail-bg: #142038;
+  --accent: #00e5b0;
+  --gold: #ffd700;
+  --warning: #ff6b35;
+  --error: #ff4757;
+  --depends: #00a8ff;
+  --supports: #2ed573;
+  --contradicts: #ff4757;
+  --layer-foundation: #00e5b0;
+  --layer-method: #00a8ff;
+  --layer-inference: #ffd700;
+  --layer-crown: #a855f7;
+  --text: #e0e0e0;
+  --text-dim: #8899aa;
+  --border: #1a2a44;
+  --sidebar-width: 280px;
+  --detail-width: 340px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+}
+
+/* Sidebar */
+#sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 16px;
+  z-index: 10;
+}
+
+#sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+#sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+#sidebar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+#sidebar header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+#sidebar h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+#graph-stats {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.panel {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel:last-child {
+  border-bottom: none;
+}
+
+.panel h2 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.panel label {
+  display: block;
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.panel input[type="range"] {
+  width: 100%;
+  margin-top: 2px;
+  accent-color: var(--accent);
+  height: 4px;
+}
+
+.val {
+  float: right;
+  color: var(--accent);
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+}
+
+select {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: 1px solid var(--accent);
+}
+
+/* Chain & layer filters */
+#chain-filters {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#chain-filters label,
+#layer-filters label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+#chain-filters input[type="checkbox"],
+#layer-filters input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+/* Metrics */
+.metrics #metrics-display {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.metrics #metrics-display span {
+  color: var(--accent);
+  font-family: 'Consolas', monospace;
+}
+
+/* Graph container */
+#graph-container {
+  flex: 1;
+  height: 100vh;
+  position: relative;
+}
+
+/* Detail panel */
+#detail-panel {
+  width: var(--detail-width);
+  min-width: var(--detail-width);
+  height: 100vh;
+  background: var(--detail-bg);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px;
+  z-index: 10;
+  transition: transform 0.25s ease;
+}
+
+#detail-panel.hidden {
+  display: none;
+}
+
+#detail-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+#detail-close:hover {
+  color: var(--text);
+}
+
+/* Detail content */
+.detail-claim {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.detail-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-foundation { background: var(--layer-foundation); color: #000; }
+.badge-method { background: var(--layer-method); color: #000; }
+.badge-inference { background: var(--layer-inference); color: #000; }
+.badge-crown { background: var(--layer-crown); color: #fff; }
+.badge-discipline {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.score-big {
+  font-size: 42px;
+  font-weight: 700;
+  font-family: 'Consolas', monospace;
+  margin: 8px 0;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.score-row .score-label {
+  flex: 1;
+}
+
+.score-row .score-value {
+  font-family: 'Consolas', monospace;
+  font-size: 14px;
+}
+
+.bar-container {
+  margin-bottom: 8px;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.bar-label span:first-child {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bar-label span:last-child {
+  color: var(--text);
+  font-family: 'Consolas', monospace;
+}
+
+.bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.detail-section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.detail-section h3 {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.dep-link {
+  display: block;
+  font-size: 12px;
+  color: var(--depends);
+  cursor: pointer;
+  padding: 3px 0;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dep-link:hover {
+  color: var(--accent);
+}
+
+.dep-link.contradicts {
+  color: var(--contradicts);
+}
+
+.evidence-count {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.evidence-count span {
+  color: var(--accent);
+  font-weight: 600;
+}
