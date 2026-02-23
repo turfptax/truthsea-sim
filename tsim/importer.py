@@ -347,6 +347,81 @@ def _recalculate_chain_scores(db, chain_id, verbose=True):
     return updated
 
 
+def load_bridges(db, bridge_file, verbose=True):
+    """Load cross-chain bridge edges from a JSON file.
+
+    Inserts edges into chain_edge AND appends to each target node's
+    depends column so that chain_score() picks up the new dependencies.
+    """
+    with open(bridge_file, "r", encoding="utf-8") as f:
+        edges = json.load(f)
+
+    # Validate node IDs exist
+    all_ids = {r["id"] for r in db.execute("SELECT id FROM chain_node").fetchall()}
+    warnings = 0
+    for edge in edges:
+        for key in ("source", "target"):
+            if edge[key] not in all_ids:
+                print(f"  WARNING: {key} '{edge[key]}' not found in DB")
+                warnings += 1
+
+    inserted = 0
+    skipped = 0
+    affected_chains = set()
+
+    for edge in edges:
+        src = edge["source"]
+        tgt = edge["target"]
+        etype = edge.get("type", "depends")
+
+        # Cross-chain edges use the target node's chain_id
+        tgt_chain = tgt.rsplit(".", 1)[0]
+        affected_chains.add(tgt_chain)
+
+        # 1. Insert into chain_edge
+        cur = db.execute(
+            """INSERT OR IGNORE INTO chain_edge
+               (chain_id, source_node, target_node, edge_type)
+               VALUES (?,?,?,?)""",
+            (tgt_chain, src, tgt, etype),
+        )
+        if cur.rowcount > 0:
+            inserted += 1
+        else:
+            skipped += 1
+
+        # 2. Append to target node's depends column (if not already there)
+        if etype == "depends":
+            row = db.execute(
+                "SELECT depends FROM chain_node WHERE id = ?", (tgt,)
+            ).fetchone()
+            if row:
+                current = [d.strip() for d in (row["depends"] or "").split(",") if d.strip()]
+                if src not in current:
+                    current.append(src)
+                    db.execute(
+                        "UPDATE chain_node SET depends = ? WHERE id = ?",
+                        (",".join(current), tgt),
+                    )
+
+    # Recalculate chain scores for all affected chains
+    recalc_total = 0
+    for chain_id in sorted(affected_chains):
+        recalc_total += _recalculate_chain_scores(db, chain_id, verbose)
+
+    db.commit()
+
+    if verbose:
+        print(f"\nBridges loaded from {bridge_file}")
+        print(f"  Edges: {inserted} inserted, {skipped} already existed")
+        if warnings:
+            print(f"  Warnings: {warnings}")
+        print(f"  Chains affected: {len(affected_chains)}")
+        print(f"  Scores recalculated: {recalc_total}")
+
+    return inserted, skipped, affected_chains
+
+
 def _load_jsonl(path):
     """Load a JSONL file into a list of dicts."""
     nodes = []

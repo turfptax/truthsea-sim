@@ -9,6 +9,7 @@ cd truthsea-sim
 python cli.py reset          # Fresh database
 python cli.py seed           # Import 20 chains / 151 quanta from JSONL
 python cli.py import-chain --directory chains/   # Add coherence theory chains
+python cli.py load-bridges   # Connect science chains to foundational bedrock
 python cli.py simulate --rounds 10 --honest 5 --malicious 2
 python cli.py report 1       # View results
 ```
@@ -29,7 +30,8 @@ tsim/
   anomaly.py        # Bayesian classification: fabrication/genuine/misinterpretation
   reports.py        # summary_report(), export_csv(), anomaly_report()
   validate.py       # Chain/JSONL data validation (ValidationError, ValidationResult)
-  importer.py       # Incremental import with ON CONFLICT upsert
+  importer.py       # Incremental import with ON CONFLICT upsert + load_bridges()
+bridges.json        # 57 cross-chain bridge edges connecting science to foundational chains
 scenarios/
   sabotage_test.py  # Multi-target sabotage scenario with cascade analysis + plots
 chains/             # Local chain data (JSON + JSONL pairs, importable)
@@ -42,6 +44,7 @@ chains/             # Local chain data (JSON + JSONL pairs, importable)
   calculus_foundations.json + .jsonl
   empirical_measurement.json + .jsonl
   logic_and_proof.json + .jsonl
+  deep_time.json + .jsonl
 missions/           # Mission templates for external AI agents
 visualizer/         # 3D interactive graph visualizer (Vite + 3d-force-graph)
 output/             # Generated PNGs and CSVs from scenarios
@@ -51,7 +54,7 @@ output/             # Generated PNGs and CSVs from scenarios
 - **chain_definition** — 30 chains (20 science + 10 foundational) across 21 disciplines
 - **chain_node** — 216 quanta + 59 alternatives (layer -1). Each has 4 pillar scores (0-100), 8 moral vector dimensions, intrinsic/chain scores
 - **evidence_source** — 593 evidence items linked to quanta
-- **chain_edge** — 275 DAG edges (depends, supports, contradicts)
+- **chain_edge** — 332 DAG edges (275 intra/cross-chain + 57 bridge edges)
 - **agent** — simulation agents with stake, reputation, accuracy tracking
 - **verification** — agent verdicts (accept/reject/flag) per quanta per round
 - **simulation_run** — run config + summary JSON
@@ -87,6 +90,8 @@ python cli.py import-chain [options]            # Import chain data (incremental
   --directory DIR   --jsonl FILE   --chain-id ID   --skip-validation
 python cli.py validate [options]                # Validate chain data (no import)
   --directory DIR   --jsonl FILE   --chain-id ID
+python cli.py load-bridges [--file FILE]        # Load cross-chain bridge edges
+  --file/-f FILE   Path to bridges.json (default: bridges.json)
 python cli.py reset                             # Drop + recreate DB
 
 python simulate.py [--damping F] [--floor F] [--penalty F]   # DAG propagation

@@ -1,0 +1,74 @@
+[
+  {"source": "physical_reality.conservation_principles", "target": "thermodynamics.energy_conservation", "type": "depends"},
+  {"source": "classical_mechanics.noether_conservation", "target": "thermodynamics.energy_conservation", "type": "depends"},
+  {"source": "calculus_foundations.integration", "target": "thermodynamics.statistical_mechanics", "type": "depends"},
+  {"source": "empirical_measurement.reproducibility", "target": "thermodynamics.heat_energy_equivalence", "type": "depends"},
+
+  {"source": "physical_reality.conservation_principles", "target": "quantum_mechanics.photoelectric_effect", "type": "depends"},
+  {"source": "calculus_foundations.derivatives", "target": "quantum_mechanics.heisenberg_uncertainty", "type": "depends"},
+  {"source": "empirical_measurement.reproducibility", "target": "quantum_mechanics.double_slit", "type": "depends"},
+  {"source": "philosophy_of_science.controlled_experiment", "target": "quantum_mechanics.photoelectric_effect", "type": "depends"},
+
+  {"source": "classical_mechanics.universal_gravitation", "target": "general_relativity.equivalence_principle", "type": "depends"},
+  {"source": "classical_mechanics.orbital_mechanics", "target": "general_relativity.mercury_precession", "type": "depends"},
+  {"source": "calculus_foundations.derivatives", "target": "general_relativity.equivalence_principle", "type": "depends"},
+  {"source": "empirical_measurement.measurement_uncertainty", "target": "general_relativity.time_dilation", "type": "depends"},
+  {"source": "empirical_measurement.reproducibility", "target": "general_relativity.gravitational_waves", "type": "depends"},
+
+  {"source": "quantum_mechanics.atomic_spectra", "target": "atomic_structure.electron_orbitals", "type": "depends"},
+  {"source": "empirical_measurement.reproducibility", "target": "atomic_structure.atoms_exist", "type": "depends"},
+  {"source": "physical_reality.conservation_principles", "target": "atomic_structure.stoichiometry", "type": "depends"},
+  {"source": "philosophy_of_science.controlled_experiment", "target": "atomic_structure.spectroscopy_id", "type": "depends"},
+
+  {"source": "atomic_structure.nuclear_model", "target": "periodic_law.atomic_number", "type": "depends"},
+  {"source": "atomic_structure.electron_orbitals", "target": "periodic_law.electron_configuration_periodicity", "type": "depends"},
+  {"source": "philosophy_of_science.empiricism", "target": "periodic_law.mendeleev_predictions", "type": "depends"},
+
+  {"source": "quantum_mechanics.quantum_tunneling", "target": "stellar_nucleosynthesis.hydrogen_fusion", "type": "depends"},
+  {"source": "thermodynamics.energy_conservation", "target": "stellar_nucleosynthesis.nuclear_binding_energy", "type": "depends"},
+  {"source": "universe_age.cmb_exists", "target": "stellar_nucleosynthesis.bbn_primordial", "type": "depends"},
+  {"source": "empirical_measurement.reproducibility", "target": "stellar_nucleosynthesis.supernova_nucleosynthesis", "type": "depends"},
+
+  {"source": "philosophy_of_science.empiricism", "target": "cell_theory.cells_observed", "type": "depends"},
+  {"source": "philosophy_of_science.controlled_experiment", "target": "cell_theory.cell_division", "type": "depends"},
+  {"source": "atomic_structure.chemical_bonding", "target": "cell_theory.cell_membrane", "type": "depends"},
+
+  {"source": "atomic_structure.molecular_structure", "target": "dna_central_dogma.dna_structure", "type": "depends"},
+  {"source": "cell_theory.cellular_metabolism", "target": "dna_central_dogma.translation", "type": "depends"},
+  {"source": "philosophy_of_science.controlled_experiment", "target": "dna_central_dogma.dna_is_heredity", "type": "depends"},
+
+  {"source": "philosophy_of_science.controlled_experiment", "target": "germ_theory.kochs_postulates", "type": "depends"},
+  {"source": "cell_theory.cells_observed", "target": "germ_theory.microorganisms_exist", "type": "depends"},
+  {"source": "evolution.natural_selection", "target": "germ_theory.antibiotic_resistance", "type": "depends"},
+  {"source": "empirical_measurement.reproducibility", "target": "germ_theory.culture_isolation", "type": "depends"},
+
+  {"source": "dna_central_dogma.dna_structure", "target": "human_genome.genome_sequenced", "type": "depends"},
+  {"source": "dna_central_dogma.genetic_code", "target": "human_genome.protein_coding_genes", "type": "depends"},
+  {"source": "philosophy_of_science.controlled_experiment", "target": "human_genome.gwas_variants", "type": "depends"},
+
+  {"source": "cell_theory.cells_observed", "target": "neurotransmission.neurons_exist", "type": "depends"},
+  {"source": "consciousness_foundations.neural_correlates", "target": "neurotransmission.action_potentials", "type": "depends"},
+  {"source": "atomic_structure.chemical_bonding", "target": "neurotransmission.receptor_binding", "type": "depends"},
+
+  {"source": "philosophy_of_science.controlled_experiment", "target": "cognitive_biases.anchoring_effect", "type": "depends"},
+  {"source": "consciousness_foundations.psychophysical_laws", "target": "cognitive_biases.dual_process_theory", "type": "depends"},
+  {"source": "epistemic_foundations.perception_reliability", "target": "cognitive_biases.confirmation_bias", "type": "depends"},
+
+  {"source": "empirical_measurement.measurement_uncertainty", "target": "climate_change.temp_record", "type": "depends"},
+  {"source": "empirical_measurement.radiometric_dating", "target": "climate_change.ice_cores", "type": "depends"},
+  {"source": "thermodynamics.energy_conservation", "target": "climate_change.radiative_forcing", "type": "depends"},
+  {"source": "philosophy_of_science.controlled_experiment", "target": "climate_change.co2_infrared", "type": "depends"},
+
+  {"source": "empirical_measurement.si_units", "target": "plate_tectonics.gps_plate_motion", "type": "depends"},
+  {"source": "physical_reality.uniformity_of_nature", "target": "plate_tectonics.paleomagnetism", "type": "depends"},
+  {"source": "earth_age.radiometric_dating_method", "target": "plate_tectonics.seafloor_spreading", "type": "depends"},
+  {"source": "empirical_measurement.reproducibility", "target": "plate_tectonics.seismic_evidence", "type": "depends"},
+
+  {"source": "logic_and_proof.predicate_logic", "target": "computation_limits.turing_machine", "type": "depends"},
+  {"source": "mathematical_foundations.incompleteness", "target": "computation_limits.halting_problem", "type": "depends"},
+  {"source": "logic_and_proof.proof_by_contradiction", "target": "computation_limits.halting_problem", "type": "depends"},
+
+  {"source": "mathematical_foundations.mathematical_modeling", "target": "supply_demand.price_mechanism", "type": "depends"},
+  {"source": "philosophy_of_science.controlled_experiment", "target": "supply_demand.price_controls_effects", "type": "depends"},
+  {"source": "cognitive_biases.loss_aversion", "target": "supply_demand.demand_curve", "type": "depends"}
+]

@@ -14,6 +14,7 @@ Usage:
   python cli.py export-graph [--output PATH]     Export graph JSON for visualizer
   python cli.py import-chain [options]           Import chain data (incremental)
   python cli.py validate [options]               Validate chain data (no import)
+  python cli.py load-bridges [--file FILE]       Load cross-chain bridge edges
   python cli.py reset                            Drop and recreate DB
 """
 
@@ -525,6 +526,20 @@ def cmd_validate(args):
         sys.exit(1)
 
 
+def cmd_load_bridges(args):
+    """Load cross-chain bridge edges from a JSON file."""
+    from tsim.importer import load_bridges
+
+    bridge_file = args.file
+    if not os.path.isfile(bridge_file):
+        print(f"ERROR: File not found: {bridge_file}")
+        sys.exit(1)
+
+    db = get_db(args.db)
+    load_bridges(db, bridge_file, verbose=True)
+    db.close()
+
+
 def cmd_reset(args):
     reset_db(args.db)
     print(f"Database reset: {args.db}")
@@ -611,6 +626,11 @@ def main():
     val.add_argument("--jsonl", help="Path to JSONL file")
     val.add_argument("--chain-id", help="Chain ID for standalone JSONL validation")
 
+    # load-bridges
+    br = sub.add_parser("load-bridges", help="Load cross-chain bridge edges")
+    br.add_argument("--file", "-f", default="bridges.json",
+                    help="Path to bridges JSON file (default: bridges.json)")
+
     # reset
     sub.add_parser("reset", help="Reset database")
 
@@ -630,6 +650,7 @@ def main():
         "export-graph": cmd_export_graph,
         "import-chain": cmd_import_chain,
         "validate": cmd_validate,
+        "load-bridges": cmd_load_bridges,
         "reset": cmd_reset,
     }
 
