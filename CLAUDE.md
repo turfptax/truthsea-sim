@@ -15,6 +15,7 @@ python cli.py report 1       # View results
 ## Project Structure
 ```
 cli.py              # CLI entry point (argparse) — start here for usage
+simulate.py         # Standalone DAG propagation with tunable params
 seed.py             # Imports data from ../TruthSea/agent-toolkit/chains/ + output/
 schema.sql          # SQLite schema (10 tables)
 truthsea.db         # Generated database (created by init/seed)
@@ -26,6 +27,9 @@ tsim/
   simulation.py     # run_simulation(db, SimConfig) — main loop
   anomaly.py        # Bayesian classification: fabrication/genuine/misinterpretation
   reports.py        # summary_report(), export_csv(), anomaly_report()
+scenarios/
+  sabotage_test.py  # Multi-target sabotage scenario with cascade analysis + plots
+output/             # Generated PNGs and CSVs from scenarios
 ```
 
 ## Data Model
@@ -59,11 +63,18 @@ python cli.py export <run_id> <file.csv>        # CSV export
 python cli.py lens --preset <name>              # Apply worldview lens
 python cli.py agents                            # List agents
 python cli.py anomalies <run_id>                # Anomaly flags
+python cli.py sabotage <node_id> <score>        # Weaken node, show cascade
+  --reason TEXT
+python cli.py flag-weak <src> <tgt>             # Flag dependency edge
+  --reason TEXT  --simulate-invalidate
 python cli.py reset                             # Drop + recreate DB
+
+python simulate.py [--damping F] [--floor F] [--penalty F]   # DAG propagation
+python scenarios/sabotage_test.py [--target ID] [--csv FILE]  # Batch sabotage
 ```
 
 ## Key Design Decisions
-- No external dependencies — stdlib only (sqlite3, json, csv, argparse, random, math)
+- Core: stdlib only (sqlite3, json, csv, argparse, random, math). matplotlib is optional (used for sabotage scenario plots)
 - Data seeded from `../TruthSea/agent-toolkit/chains/*.json` (chain metadata + edges) and `../TruthSea/agent-toolkit/output/*.jsonl` (full node data). Falls back to `../truthsea-dashboard/src/data/assembled-chains.json` if those aren't available.
 - Agents persist across simulations in the same DB. Use `reset` to start fresh.
 - The `convergence` raw data column maps to the `relativism` lens weight (rename was UI-only).

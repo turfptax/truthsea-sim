@@ -129,13 +129,23 @@ def _topo_sort(nodes: dict) -> list[str]:
     return order
 
 
-def propagate_scores(graph: dict, params: dict | None = None) -> dict:
+def propagate_scores(
+    graph: dict,
+    params: dict | None = None,
+    intrinsic_overrides: dict[str, float] | None = None,
+    edge_weights: dict[tuple[str, str], float] | None = None,
+) -> dict:
     """Propagate scores through the TruthDAG using tunable parameters.
 
     Args:
         graph: Dict with "nodes" and "edges" from load_graph().
         params: Dict with keys: damping, floor, contradiction_penalty,
                 pillar_weights, max_depth. Missing keys use defaults.
+        intrinsic_overrides: {node_id: new_intrinsic_score} to override
+            specific nodes (used by sabotage simulation).
+        edge_weights: {(source, target): weight} to scale dependency
+            contributions (0.0 = removed, 0.5 = half strength, etc.).
+            Used by flag-weak simulation.
 
     Returns:
         Dict with:
@@ -149,12 +159,17 @@ def propagate_scores(graph: dict, params: dict | None = None) -> dict:
     penalty = p["contradiction_penalty"]
     weights = p["pillar_weights"]
     max_depth = p["max_depth"]
+    overrides = intrinsic_overrides or {}
+    ew = edge_weights or {}
 
     nodes = graph["nodes"]
 
     # Phase 1: Recompute intrinsic scores with custom pillar weights
     for nid, node in nodes.items():
-        node["new_intrinsic"] = compute_intrinsic(node["pillar_scores"], weights)
+        if nid in overrides:
+            node["new_intrinsic"] = overrides[nid]
+        else:
+            node["new_intrinsic"] = compute_intrinsic(node["pillar_scores"], weights)
 
     # Phase 2: Topological propagation of chain scores
     order = _topo_sort(nodes)
@@ -170,15 +185,21 @@ def propagate_scores(graph: dict, params: dict | None = None) -> dict:
 
         intrinsic = node["new_intrinsic"]
 
-        # Find weakest dependency chain score
+        # Find weakest dependency chain score (respecting edge weights)
         deps = [d for d in node["depends"] if d in nodes]
         if deps:
-            min_dep = min(_chain_score(d, depth + 1) for d in deps)
+            dep_scores = []
+            for d in deps:
+                raw = _chain_score(d, depth + 1)
+                w = ew.get((d, nid), 1.0)
+                dep_scores.append(raw * w)
+            min_dep = min(dep_scores)
         else:
             min_dep = 100.0  # no dependencies = full strength
 
-        # Count contradictions (only those present in graph)
-        n_contradictions = sum(1 for c in node["contradicts"] if c in nodes)
+        # Count contradictions (only those present in graph, weighted)
+        contrad_ids = [c for c in node["contradicts"] if c in nodes]
+        n_contradictions = sum(ew.get((c, nid), 1.0) for c in contrad_ids)
 
         # TruthDAG V2 formula:
         # chain_score = intrinsic * (floor + damping * min_dep/100) * (1 - penalty * contradictions)
@@ -306,6 +327,51 @@ def print_results(result: dict, params: dict):
         print(f"  {w['ratio']:>6.3f} {w['intrinsic']:>5.1f} {w['chain']:>6.1f}  {w['claim']}")
 
     print(f"\n{'=' * 70}")
+
+
+def cascade_depth(graph: dict, source_id: str, before: dict, after: dict, threshold: float = 0.5) -> int:
+    """Measure how many hops damage propagates from a sabotaged node.
+
+    Walks the dependency graph outward from source_id via BFS,
+    counting hops while downstream nodes show score changes above threshold.
+    """
+    nodes = graph["nodes"]
+    # Build reverse adjacency: node -> list of nodes that depend on it
+    children = {nid: [] for nid in nodes}
+    for nid, node in nodes.items():
+        for dep_id in node["depends"]:
+            if dep_id in children:
+                children[dep_id].append(nid)
+
+    visited = set()
+    queue = [(source_id, 0)]
+    max_depth = 0
+
+    while queue:
+        nid, depth = queue.pop(0)
+        if nid in visited:
+            continue
+        visited.add(nid)
+
+        for child in children.get(nid, []):
+            if child in visited:
+                continue
+            b = before.get(child, 0)
+            a = after.get(child, 0)
+            if abs(b - a) >= threshold:
+                max_depth = max(max_depth, depth + 1)
+                queue.append((child, depth + 1))
+
+    return max_depth
+
+
+def deepcopy_graph(graph: dict) -> dict:
+    """Deep-copy a graph dict so propagation doesn't mutate the original."""
+    import copy
+    return {
+        "nodes": {nid: {**node} for nid, node in graph["nodes"].items()},
+        "edges": [dict(e) for e in graph["edges"]],
+    }
 
 
 def _parse_csv(val) -> list[str]:

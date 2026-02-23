@@ -9,6 +9,8 @@ Usage:
   python cli.py lens [--preset NAME]             Apply lens, show re-scored quanta
   python cli.py agents                           List all agents + stats
   python cli.py anomalies <run_id>               Show anomaly flags
+  python cli.py sabotage <node_id> <new_score>   Weaken a node and re-propagate
+  python cli.py flag-weak <src> <tgt>            Flag/invalidate a dependency edge
   python cli.py reset                            Drop and recreate DB
 """
 
@@ -26,6 +28,7 @@ from tsim.db import init_db, reset_db, get_db, DEFAULT_DB
 from tsim.scoring import recalculate_all, PRESETS
 from tsim.simulation import run_simulation, SimConfig
 from tsim.reports import summary_report, agent_leaderboard, export_csv, anomaly_report
+from simulate import load_graph, propagate_scores, deepcopy_graph, cascade_depth
 
 
 def cmd_init(args):
@@ -134,6 +137,200 @@ def cmd_anomalies(args):
     db.close()
 
 
+def cmd_sabotage(args):
+    db = get_db(args.db)
+    graph = load_graph(db)
+
+    node_id = args.node_id
+    new_score = args.new_score
+
+    if node_id not in graph["nodes"]:
+        print(f"ERROR: Node '{node_id}' not found in graph.")
+        print(f"Hint: use full ID like 'universe_age.speed_of_light'")
+        db.close()
+        return
+
+    node = graph["nodes"][node_id]
+    old_intrinsic = node["intrinsic_score"]
+    reason = args.reason or "sabotage simulation"
+
+    print(f"{'='*70}")
+    print(f"Sabotage: {node_id}")
+    print(f"  Claim:  {node['claim'][:65]}")
+    print(f"  Chain:  {node['chain_id']}  Layer: {node['layer']}")
+    print(f"  Reason: {reason}")
+    print(f"  Intrinsic: {old_intrinsic:.1f} -> {new_score:.1f}")
+    print(f"{'='*70}")
+
+    # Baseline propagation
+    baseline_graph = deepcopy_graph(graph)
+    baseline = propagate_scores(baseline_graph)
+    before_scores = {c["id"]: c["new_score"] for c in baseline["changes"]}
+
+    # Sabotaged propagation
+    sabotaged_graph = deepcopy_graph(graph)
+    sabotaged = propagate_scores(sabotaged_graph, intrinsic_overrides={node_id: new_score})
+    after_scores = {c["id"]: c["new_score"] for c in sabotaged["changes"]}
+
+    # Cascade depth
+    depth = cascade_depth(graph, node_id, before_scores, after_scores)
+
+    # Compute per-node deltas
+    deltas = []
+    for nid in before_scores:
+        b = before_scores[nid]
+        a = after_scores[nid]
+        if abs(b - a) > 0.01:
+            deltas.append({
+                "id": nid,
+                "claim": graph["nodes"][nid]["claim"][:55],
+                "before": round(b, 1),
+                "after": round(a, 1),
+                "delta": round(a - b, 1),
+            })
+    deltas.sort(key=lambda d: d["delta"])
+
+    b_avg = baseline["metrics"]["avg_chain_score"]
+    a_avg = sabotaged["metrics"]["avg_chain_score"]
+    pct_drop = ((b_avg - a_avg) / b_avg * 100) if b_avg > 0 else 0
+
+    print(f"\nImpact Summary:")
+    print(f"  Avg chain score: {b_avg:.1f} -> {a_avg:.1f} ({pct_drop:+.1f}%)")
+    print(f"  Min chain score: {baseline['metrics']['min_chain_score']:.1f} -> {sabotaged['metrics']['min_chain_score']:.1f}")
+    print(f"  Nodes affected:  {len(deltas)}")
+    print(f"  Cascade depth:   {depth} hops")
+
+    if deltas:
+        print(f"\nMost Affected Nodes:")
+        print(f"  {'Delta':>6} {'Before':>6} {'After':>6}  {'Claim'}")
+        print(f"  {'-'*6} {'-'*6} {'-'*6}  {'-'*50}")
+        for d in deltas[:10]:
+            print(f"  {d['delta']:>+6.1f} {d['before']:>6.1f} {d['after']:>6.1f}  {d['claim']}")
+
+    # Update DB intrinsic score
+    db.execute(
+        "UPDATE chain_node SET intrinsic_score=? WHERE id=?",
+        (new_score, node_id),
+    )
+    db.commit()
+    print(f"\nDatabase updated: {node_id} intrinsic_score = {new_score}")
+
+    db.close()
+    print(f"{'='*70}")
+
+
+def cmd_flag_weak(args):
+    db = get_db(args.db)
+    graph = load_graph(db)
+
+    src = args.source_node
+    tgt = args.target_node
+
+    if src not in graph["nodes"]:
+        print(f"ERROR: Source node '{src}' not found.")
+        db.close()
+        return
+    if tgt not in graph["nodes"]:
+        print(f"ERROR: Target node '{tgt}' not found.")
+        db.close()
+        return
+
+    # Verify edge exists
+    edge_exists = False
+    edge_type = None
+    for e in graph["edges"]:
+        if e["source"] == src and e["target"] == tgt:
+            edge_exists = True
+            edge_type = e["type"]
+            break
+    # Also check the depends/contradicts lists on the target node
+    tgt_node = graph["nodes"][tgt]
+    if src in tgt_node["depends"] or src in tgt_node["contradicts"]:
+        edge_exists = True
+        if src in tgt_node["contradicts"]:
+            edge_type = edge_type or "contradicts"
+        else:
+            edge_type = edge_type or "depends"
+
+    if not edge_exists:
+        print(f"ERROR: No edge found from '{src}' to '{tgt}'.")
+        print(f"  {tgt} depends on: {tgt_node['depends']}")
+        print(f"  {tgt} contradicts: {tgt_node['contradicts']}")
+        db.close()
+        return
+
+    print(f"{'='*70}")
+    print(f"Flag Weak Link: {src} -> {tgt}")
+    print(f"  Edge type:  {edge_type}")
+    print(f"  Source:     {graph['nodes'][src]['claim'][:60]}")
+    print(f"  Target:     {graph['nodes'][tgt]['claim'][:60]}")
+    print(f"{'='*70}")
+
+    # Record the flag
+    flag_record = {
+        "source": src, "target": tgt, "edge_type": edge_type,
+        "reason": args.reason or "weak link flagged",
+    }
+    print(f"\nFlag recorded: {flag_record}")
+
+    if args.simulate_invalidate:
+        # Baseline
+        baseline_graph = deepcopy_graph(graph)
+        baseline = propagate_scores(baseline_graph)
+        before_scores = {c["id"]: c["new_score"] for c in baseline["changes"]}
+
+        # Invalidated: reduce edge weight by 50% (or 0 for contradicts)
+        if edge_type == "contradicts":
+            weight = 0.0
+            action = "removed (contradiction nullified)"
+        else:
+            weight = 0.5
+            action = "reduced to 50%"
+
+        invalidated_graph = deepcopy_graph(graph)
+        invalidated = propagate_scores(
+            invalidated_graph, edge_weights={(src, tgt): weight}
+        )
+        after_scores = {c["id"]: c["new_score"] for c in invalidated["changes"]}
+
+        print(f"\nSimulated invalidation: edge weight {action}")
+
+        # Deltas
+        deltas = []
+        for nid in before_scores:
+            b = before_scores[nid]
+            a = after_scores[nid]
+            if abs(b - a) > 0.01:
+                deltas.append({
+                    "id": nid,
+                    "claim": graph["nodes"][nid]["claim"][:55],
+                    "before": round(b, 1),
+                    "after": round(a, 1),
+                    "delta": round(a - b, 1),
+                })
+        deltas.sort(key=lambda d: d["delta"])
+
+        b_avg = baseline["metrics"]["avg_chain_score"]
+        a_avg = invalidated["metrics"]["avg_chain_score"]
+        pct = ((a_avg - b_avg) / b_avg * 100) if b_avg > 0 else 0
+
+        print(f"\nImpact:")
+        print(f"  Avg chain score: {b_avg:.1f} -> {a_avg:.1f} ({pct:+.1f}%)")
+        print(f"  Nodes affected:  {len(deltas)}")
+
+        if deltas:
+            print(f"\nAffected Nodes:")
+            print(f"  {'Delta':>6} {'Before':>6} {'After':>6}  {'Claim'}")
+            print(f"  {'-'*6} {'-'*6} {'-'*6}  {'-'*50}")
+            for d in deltas[:10]:
+                print(f"  {d['delta']:>+6.1f} {d['before']:>6.1f} {d['after']:>6.1f}  {d['claim']}")
+    else:
+        print("  (use --simulate-invalidate to see ripple effects)")
+
+    db.close()
+    print(f"\n{'='*70}")
+
+
 def cmd_reset(args):
     reset_db(args.db)
     print(f"Database reset: {args.db}")
@@ -188,6 +385,20 @@ def main():
     anom = sub.add_parser("anomalies", help="Show anomaly flags")
     anom.add_argument("run_id", type=int, help="Simulation run ID")
 
+    # sabotage
+    sab = sub.add_parser("sabotage", help="Weaken a node and show ripple effects")
+    sab.add_argument("node_id", help="Node ID to sabotage (e.g. universe_age.speed_of_light)")
+    sab.add_argument("new_score", type=float, help="New intrinsic score (0-100)")
+    sab.add_argument("--reason", default=None, help="Reason for sabotage")
+
+    # flag-weak
+    fw = sub.add_parser("flag-weak", help="Flag a dependency edge as weak")
+    fw.add_argument("source_node", help="Source node ID of the edge")
+    fw.add_argument("target_node", help="Target node ID of the edge")
+    fw.add_argument("--reason", default=None, help="Reason for flagging")
+    fw.add_argument("--simulate-invalidate", action="store_true",
+                    help="Simulate edge invalidation and show score ripple")
+
     # reset
     sub.add_parser("reset", help="Reset database")
 
@@ -202,6 +413,8 @@ def main():
         "lens": cmd_lens,
         "agents": cmd_agents,
         "anomalies": cmd_anomalies,
+        "sabotage": cmd_sabotage,
+        "flag-weak": cmd_flag_weak,
         "reset": cmd_reset,
     }
 
