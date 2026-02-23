@@ -7,3 +7,6 @@ __pycache__/
 *.csv
 .env
 output/
+visualizer/node_modules/
+visualizer/dist/
+visualizer/public/graph.json

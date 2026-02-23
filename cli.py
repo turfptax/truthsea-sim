@@ -11,10 +11,15 @@ Usage:
   python cli.py anomalies <run_id>               Show anomaly flags
   python cli.py sabotage <node_id> <new_score>   Weaken a node and re-propagate
   python cli.py flag-weak <src> <tgt>            Flag/invalidate a dependency edge
+  python cli.py export-graph [--output PATH]     Export graph JSON for visualizer
+  python cli.py import-chain [options]           Import chain data (incremental)
+  python cli.py validate [options]               Validate chain data (no import)
   python cli.py reset                            Drop and recreate DB
 """
 
 import argparse
+import json
+import os
 import sys
 import io
 
@@ -331,6 +336,195 @@ def cmd_flag_weak(args):
     print(f"\n{'='*70}")
 
 
+def cmd_export_graph(args):
+    """Export graph data as JSON for the 3D visualizer."""
+    from datetime import datetime
+    from simulate import DEFAULT_PARAMS
+
+    db = get_db(args.db)
+
+    # Load nodes
+    rows = db.execute("SELECT * FROM chain_node WHERE layer >= 0").fetchall()
+    nodes = []
+    for r in rows:
+        r = dict(r)
+        nodes.append({
+            "id": r["id"],
+            "chain_id": r["chain_id"],
+            "claim": r["claim"],
+            "discipline": r["discipline"],
+            "layer": r["layer"],
+            "source_type": r["source_type"],
+            "pillar_scores": {
+                "correspondence": r["correspondence"],
+                "coherence": r["coherence"],
+                "convergence": r["convergence"],
+                "pragmatism": r["pragmatism"],
+            },
+            "intrinsic_score": r["intrinsic_score"],
+            "chain_score": r["chain_score"],
+            "moral_vector": {
+                "care": r["moral_care"],
+                "fairness": r["moral_fairness"],
+                "loyalty": r["moral_loyalty"],
+                "authority": r["moral_authority"],
+                "sanctity": r["moral_sanctity"],
+                "liberty": r["moral_liberty"],
+                "epistemic_humility": r["moral_epistemic_humility"],
+                "temporal_stewardship": r["moral_temporal_stewardship"],
+            },
+            "depends": [v.strip() for v in (r.get("depends") or "").split(",") if v.strip()],
+            "contradicts": [v.strip() for v in (r.get("contradicts") or "").split(",") if v.strip()],
+        })
+
+    # Load chains
+    chain_rows = db.execute("SELECT * FROM chain_definition").fetchall()
+    chains = {}
+    for c in chain_rows:
+        c = dict(c)
+        chains[c["id"]] = {"name": c["name"], "discipline": c["discipline"], "crown_claim": c["crown_claim"]}
+
+    # Load edges
+    edge_rows = db.execute("SELECT * FROM chain_edge").fetchall()
+    edges = []
+    for e in edge_rows:
+        e = dict(e)
+        edges.append({
+            "source": e["source_node"],
+            "target": e["target_node"],
+            "type": e["edge_type"],
+            "chain_id": e["chain_id"],
+        })
+
+    # Evidence counts per node
+    ev_rows = db.execute(
+        "SELECT quanta_id, COUNT(*) as cnt FROM evidence_source GROUP BY quanta_id"
+    ).fetchall()
+    ev_counts = {r["quanta_id"]: r["cnt"] for r in ev_rows}
+    for node in nodes:
+        node["evidence_count"] = ev_counts.get(node["id"], 0)
+
+    db.close()
+
+    data = {
+        "meta": {
+            "exported_at": datetime.now().isoformat(),
+            "node_count": len(nodes),
+            "edge_count": len(edges),
+            "chain_count": len(chains),
+        },
+        "chains": chains,
+        "nodes": nodes,
+        "edges": edges,
+        "params_default": DEFAULT_PARAMS,
+    }
+
+    output = args.output
+    os.makedirs(os.path.dirname(output) or ".", exist_ok=True)
+    with open(output, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+    print(f"Exported graph: {len(nodes)} nodes, {len(edges)} edges, {len(chains)} chains")
+    print(f"Output: {output}")
+
+
+def cmd_import_chain(args):
+    """Import chain data from files or directory."""
+    from tsim.importer import import_chain as do_import, import_from_directory, import_jsonl_only
+
+    db = get_db(args.db)
+
+    if args.directory:
+        results = import_from_directory(
+            db, args.directory,
+            validate_first=not args.skip_validation,
+            verbose=True,
+        )
+    elif args.jsonl:
+        result = import_jsonl_only(
+            db, args.jsonl,
+            chain_id=args.chain_id,
+            validate_first=not args.skip_validation,
+            verbose=True,
+        )
+    else:
+        print("ERROR: Provide --directory or --jsonl")
+        db.close()
+        return
+
+    db.close()
+
+
+def cmd_validate(args):
+    """Validate chain data without importing."""
+    from tsim.validate import validate_chain_dataset, validate_jsonl_file
+
+    if args.jsonl:
+        result = validate_jsonl_file(args.jsonl, chain_id=args.chain_id)
+        print(result.summary())
+        for e in result.errors:
+            print(str(e))
+        for w in result.warnings:
+            print(str(w))
+        sys.exit(0 if result.is_valid else 1)
+
+    elif args.directory:
+        import json as _json
+
+        # Determine layout
+        chains_dir = args.directory
+        output_dir = args.directory
+        if os.path.isdir(os.path.join(args.directory, "chains")):
+            chains_dir = os.path.join(args.directory, "chains")
+        if os.path.isdir(os.path.join(args.directory, "output")):
+            output_dir = os.path.join(args.directory, "output")
+
+        json_files = {f[:-5]: os.path.join(chains_dir, f)
+                      for f in os.listdir(chains_dir) if f.endswith(".json") and not f.startswith("_")}
+        jsonl_files = {f[:-6]: os.path.join(output_dir, f)
+                       for f in os.listdir(output_dir) if f.endswith(".jsonl")}
+
+        paired = set(json_files.keys()) & set(jsonl_files.keys())
+        if not paired:
+            print(f"No matching chain JSON + JSONL pairs found in {args.directory}")
+            sys.exit(1)
+
+        all_valid = True
+        for chain_id in sorted(paired):
+            with open(json_files[chain_id], "r", encoding="utf-8") as f:
+                chain_json = _json.load(f)
+            nodes = []
+            with open(jsonl_files[chain_id], "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        nodes.append(_json.loads(line))
+
+            # Get existing IDs from DB for cross-chain validation
+            existing_ids = set()
+            try:
+                db = get_db(args.db)
+                rows = db.execute("SELECT id FROM chain_node").fetchall()
+                existing_ids = {r["id"] for r in rows}
+                db.close()
+            except Exception:
+                pass
+
+            result = validate_chain_dataset(chain_json, nodes, existing_ids)
+            print(result.summary())
+            for e in result.errors:
+                print(str(e))
+            for w in result.warnings:
+                print(str(w))
+            if not result.is_valid:
+                all_valid = False
+
+        sys.exit(0 if all_valid else 1)
+    else:
+        print("ERROR: Provide --directory or --jsonl")
+        sys.exit(1)
+
+
 def cmd_reset(args):
     reset_db(args.db)
     print(f"Database reset: {args.db}")
@@ -399,6 +593,24 @@ def main():
     fw.add_argument("--simulate-invalidate", action="store_true",
                     help="Simulate edge invalidation and show score ripple")
 
+    # export-graph
+    eg = sub.add_parser("export-graph", help="Export graph JSON for 3D visualizer")
+    eg.add_argument("--output", default="visualizer/public/graph.json",
+                     help="Output JSON path (default: visualizer/public/graph.json)")
+
+    # import-chain
+    imp = sub.add_parser("import-chain", help="Import chain data (incremental upsert)")
+    imp.add_argument("--directory", "-d", help="Directory with chain JSON + JSONL files")
+    imp.add_argument("--jsonl", help="Path to a single JSONL file")
+    imp.add_argument("--chain-id", help="Chain ID (inferred from file if not given)")
+    imp.add_argument("--skip-validation", action="store_true", help="Skip validation before import")
+
+    # validate
+    val = sub.add_parser("validate", help="Validate chain data (no import)")
+    val.add_argument("--directory", "-d", help="Directory with chain files")
+    val.add_argument("--jsonl", help="Path to JSONL file")
+    val.add_argument("--chain-id", help="Chain ID for standalone JSONL validation")
+
     # reset
     sub.add_parser("reset", help="Reset database")
 
@@ -415,6 +627,9 @@ def main():
         "anomalies": cmd_anomalies,
         "sabotage": cmd_sabotage,
         "flag-weak": cmd_flag_weak,
+        "export-graph": cmd_export_graph,
+        "import-chain": cmd_import_chain,
+        "validate": cmd_validate,
         "reset": cmd_reset,
     }
 

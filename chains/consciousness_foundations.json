@@ -1,0 +1,37 @@
+{
+  "id": "consciousness_foundations",
+  "name": "Consciousness Foundations",
+  "discipline": "Philosophy of Mind / Neuroscience",
+  "crownClaim": "Conscious experience exists as a real phenomenon, though its relationship to physical processes remains an open and foundational question",
+  "nodes": [
+    "consciousness_foundations.subjective_experience",
+    "consciousness_foundations.neural_correlates",
+    "consciousness_foundations.psychophysical_laws",
+    "consciousness_foundations.hard_problem",
+    "consciousness_foundations.consciousness_crown"
+  ],
+  "edges": [
+    {"source": "consciousness_foundations.subjective_experience", "target": "consciousness_foundations.psychophysical_laws", "type": "depends"},
+    {"source": "consciousness_foundations.neural_correlates", "target": "consciousness_foundations.psychophysical_laws", "type": "depends"},
+    {"source": "consciousness_foundations.subjective_experience", "target": "consciousness_foundations.hard_problem", "type": "depends"},
+    {"source": "consciousness_foundations.psychophysical_laws", "target": "consciousness_foundations.consciousness_crown", "type": "depends"},
+    {"source": "consciousness_foundations.hard_problem", "target": "consciousness_foundations.consciousness_crown", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "consciousness_foundations.alt_eliminativism",
+      "replacesNodeId": "consciousness_foundations.subjective_experience",
+      "claim": "Consciousness is an illusion; folk-psychological concepts like qualia will be eliminated by neuroscience"
+    },
+    {
+      "id": "consciousness_foundations.alt_panpsychism",
+      "replacesNodeId": "consciousness_foundations.hard_problem",
+      "claim": "Consciousness is a fundamental feature of all matter, not an emergent property unique to brains"
+    },
+    {
+      "id": "consciousness_foundations.alt_dualism",
+      "replacesNodeId": "consciousness_foundations.neural_correlates",
+      "claim": "Mind and body are fundamentally different substances; neural correlates reflect interaction, not identity"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "mathematical_foundations",
+  "name": "Mathematical Foundations",
+  "discipline": "Mathematics / Philosophy",
+  "crownClaim": "Mathematical reasoning provides a consistent, formal framework for deriving necessary truths from axioms, applicable to modeling physical reality",
+  "instructions": "Research each claim. Some are axiomatic. Cross-chain dependencies on epistemic_foundations noted. Focus evidence on foundational mathematics papers, Goedel's theorems, and the applicability of mathematics to physics.",
+  "claims": [
+    {
+      "nodeId": "peano_axioms",
+      "claim": "The natural numbers can be axiomatized (Peano axioms) providing a consistent foundation for arithmetic",
+      "layer": 0,
+      "searchHints": ["Peano axioms", "foundations of arithmetic", "natural number axiomatization"],
+      "depends": []
+    },
+    {
+      "nodeId": "set_theory_zfc",
+      "claim": "ZFC set theory provides a consistent axiomatic foundation for most of mathematics",
+      "layer": 0,
+      "searchHints": ["ZFC set theory", "Zermelo-Fraenkel axioms", "consistency of ZFC"],
+      "depends": []
+    },
+    {
+      "nodeId": "proof_validity",
+      "claim": "A formal proof guarantees truth-preservation from axioms to theorems within the system",
+      "layer": 1,
+      "searchHints": ["formal proof theory", "soundness completeness", "Hilbert program"],
+      "depends": ["peano_axioms"]
+    },
+    {
+      "nodeId": "incompleteness",
+      "claim": "Any consistent formal system powerful enough to encode arithmetic is incomplete — there exist true statements it cannot prove (Goedel)",
+      "layer": 1,
+      "searchHints": ["Goedel incompleteness theorems", "limits of formal systems", "Goedel 1931"],
+      "depends": ["peano_axioms", "proof_validity"]
+    },
+    {
+      "nodeId": "mathematical_modeling",
+      "claim": "Mathematics can model physical systems with predictive accuracy far exceeding chance",
+      "layer": 2,
+      "searchHints": ["unreasonable effectiveness of mathematics Wigner", "mathematical physics", "mathematical modeling predictive power"],
+      "depends": ["proof_validity"]
+    },
+    {
+      "nodeId": "math_crown",
+      "claim": "Mathematical reasoning provides a consistent formal framework for deriving necessary truths, applicable to modeling physical reality",
+      "layer": 3,
+      "searchHints": ["philosophy of mathematics overview", "mathematical knowledge", "mathematical realism vs formalism"],
+      "depends": ["mathematical_modeling", "incompleteness"]
+    }
+  ],
+  "alternatives": [
+    {
+      "nodeId": "alt_formalism_only",
+      "replacesNodeId": "mathematical_modeling",
+      "claim": "Mathematics is purely formal symbol manipulation with no necessary connection to physical reality",
+      "searchHints": ["mathematical formalism", "Hilbert formalism", "mathematics as game"]
+    },
+    {
+      "nodeId": "alt_intuitionism",
+      "replacesNodeId": "set_theory_zfc",
+      "claim": "Classical logic (law of excluded middle) should be rejected; only constructive proofs are valid",
+      "searchHints": ["intuitionism Brouwer", "constructive mathematics", "law excluded middle rejection"]
+    }
+  ]
+}

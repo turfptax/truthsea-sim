@@ -1,0 +1,64 @@
+{
+  "id": "consciousness_foundations",
+  "name": "Consciousness Foundations",
+  "discipline": "Philosophy of Mind / Neuroscience",
+  "crownClaim": "Conscious experience exists as a real phenomenon, though its relationship to physical processes remains an open and foundational question",
+  "instructions": "Research each claim. Subjective experience is the most certain axiom (Descartes' cogito). Neural correlates have strong empirical support. The hard problem is genuinely unsolved. Focus evidence on neuroscience of consciousness, philosophy of mind, and psychophysics.",
+  "claims": [
+    {
+      "nodeId": "subjective_experience",
+      "claim": "Subjective experience (qualia) exists: there is something it is like to be a conscious being",
+      "layer": 0,
+      "searchHints": ["qualia philosophy", "Nagel what is it like to be a bat", "phenomenal consciousness"],
+      "depends": []
+    },
+    {
+      "nodeId": "neural_correlates",
+      "claim": "Specific patterns of neural activity consistently correlate with specific conscious states",
+      "layer": 0,
+      "searchHints": ["neural correlates of consciousness", "NCC Crick Koch", "brain consciousness correlation"],
+      "depends": []
+    },
+    {
+      "nodeId": "psychophysical_laws",
+      "claim": "Systematic, lawful relationships exist between physical stimuli and conscious experience (psychophysics)",
+      "layer": 1,
+      "searchHints": ["psychophysics Weber Fechner", "Stevens power law", "signal detection theory"],
+      "depends": ["subjective_experience", "neural_correlates"]
+    },
+    {
+      "nodeId": "hard_problem",
+      "claim": "Explaining why and how physical processes give rise to subjective experience (the 'hard problem') remains unsolved",
+      "layer": 1,
+      "searchHints": ["hard problem consciousness Chalmers", "explanatory gap Levine", "mind-body problem"],
+      "depends": ["subjective_experience"]
+    },
+    {
+      "nodeId": "consciousness_crown",
+      "claim": "Conscious experience exists as a real phenomenon, though its relationship to physical processes remains an open and foundational question",
+      "layer": 3,
+      "searchHints": ["consciousness overview philosophy", "consciousness science status", "consciousness theories comparison"],
+      "depends": ["psychophysical_laws", "hard_problem"]
+    }
+  ],
+  "alternatives": [
+    {
+      "nodeId": "alt_eliminativism",
+      "replacesNodeId": "subjective_experience",
+      "claim": "Consciousness is an illusion; folk-psychological concepts like qualia will be eliminated by neuroscience",
+      "searchHints": ["eliminative materialism Churchland", "illusionism consciousness Frankish", "consciousness as illusion"]
+    },
+    {
+      "nodeId": "alt_panpsychism",
+      "replacesNodeId": "hard_problem",
+      "claim": "Consciousness is a fundamental feature of all matter, not an emergent property unique to brains",
+      "searchHints": ["panpsychism philosophy", "integrated information theory Tononi", "Chalmers panpsychism"]
+    },
+    {
+      "nodeId": "alt_dualism",
+      "replacesNodeId": "neural_correlates",
+      "claim": "Mind and body are fundamentally different substances; neural correlates reflect interaction, not identity",
+      "searchHints": ["substance dualism Descartes", "property dualism", "interactionism philosophy of mind"]
+    }
+  ]
+}

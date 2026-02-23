@@ -1,0 +1,43 @@
+{
+  "id": "epistemic_foundations",
+  "name": "Epistemic Foundations",
+  "discipline": "Philosophy / Epistemology",
+  "crownClaim": "Human knowledge acquisition through logic, perception, and induction is reliable enough to produce justified true beliefs about an external reality",
+  "nodes": [
+    "epistemic_foundations.external_world",
+    "epistemic_foundations.law_of_noncontradiction",
+    "epistemic_foundations.perception_reliability",
+    "epistemic_foundations.inductive_reasoning",
+    "epistemic_foundations.deductive_validity",
+    "epistemic_foundations.justified_true_belief",
+    "epistemic_foundations.epistemic_crown"
+  ],
+  "edges": [
+    {"source": "epistemic_foundations.external_world", "target": "epistemic_foundations.inductive_reasoning", "type": "depends"},
+    {"source": "epistemic_foundations.perception_reliability", "target": "epistemic_foundations.inductive_reasoning", "type": "depends"},
+    {"source": "epistemic_foundations.law_of_noncontradiction", "target": "epistemic_foundations.deductive_validity", "type": "depends"},
+    {"source": "epistemic_foundations.perception_reliability", "target": "epistemic_foundations.justified_true_belief", "type": "depends"},
+    {"source": "epistemic_foundations.inductive_reasoning", "target": "epistemic_foundations.justified_true_belief", "type": "depends"},
+    {"source": "epistemic_foundations.deductive_validity", "target": "epistemic_foundations.justified_true_belief", "type": "depends"},
+    {"source": "epistemic_foundations.justified_true_belief", "target": "epistemic_foundations.epistemic_crown", "type": "depends"},
+    {"source": "epistemic_foundations.inductive_reasoning", "target": "epistemic_foundations.epistemic_crown", "type": "depends"},
+    {"source": "epistemic_foundations.external_world", "target": "epistemic_foundations.perception_reliability", "type": "supports"}
+  ],
+  "alternatives": [
+    {
+      "id": "epistemic_foundations.alt_solipsism",
+      "replacesNodeId": "epistemic_foundations.external_world",
+      "claim": "Only one's own mind can be known to exist; the external world may be an illusion"
+    },
+    {
+      "id": "epistemic_foundations.alt_radical_skepticism",
+      "replacesNodeId": "epistemic_foundations.perception_reliability",
+      "claim": "Systematic deception (evil demon, simulation) makes all sensory evidence unreliable"
+    },
+    {
+      "id": "epistemic_foundations.alt_problem_of_induction",
+      "replacesNodeId": "epistemic_foundations.inductive_reasoning",
+      "claim": "No amount of past observation can logically justify predictions about unobserved cases (Hume's problem remains unsolved)"
+    }
+  ]
+}

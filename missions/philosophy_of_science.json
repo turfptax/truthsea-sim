@@ -1,0 +1,78 @@
+{
+  "id": "philosophy_of_science",
+  "name": "Philosophy of Science",
+  "discipline": "Philosophy of Science",
+  "crownClaim": "The scientific method, combining empiricism with systematic hypothesis testing, is the most reliable method for generating knowledge about the natural world",
+  "instructions": "Research each claim. Cross-chain dependencies on epistemic_foundations nodes are noted. Focus evidence on key philosophy of science papers, meta-science studies, and replication research.",
+  "claims": [
+    {
+      "nodeId": "empiricism",
+      "claim": "Knowledge about the natural world comes primarily from sensory experience and observation",
+      "layer": 0,
+      "searchHints": ["empiricism SEP", "British empiricists", "observation theory-laden"],
+      "depends": []
+    },
+    {
+      "nodeId": "falsifiability",
+      "claim": "A hypothesis must be potentially falsifiable by observation to be scientifically meaningful",
+      "layer": 0,
+      "searchHints": ["Popper falsifiability", "demarcation problem science", "falsificationism critiques"],
+      "depends": []
+    },
+    {
+      "nodeId": "controlled_experiment",
+      "claim": "Controlled experiments isolating variables can establish causal relationships",
+      "layer": 1,
+      "searchHints": ["randomized controlled trial history", "experimental method Mill", "causal inference experiments"],
+      "depends": ["empiricism"]
+    },
+    {
+      "nodeId": "peer_review",
+      "claim": "Independent replication and peer critique improve the reliability of scientific claims",
+      "layer": 1,
+      "searchHints": ["peer review effectiveness", "replication crisis", "scientific self-correction"],
+      "depends": ["empiricism", "falsifiability"]
+    },
+    {
+      "nodeId": "bayesian_updating",
+      "claim": "Rational belief revision follows probabilistic updating on new evidence",
+      "layer": 1,
+      "searchHints": ["Bayesian epistemology", "Bayes theorem scientific inference", "probabilistic reasoning"],
+      "depends": []
+    },
+    {
+      "nodeId": "scientific_consensus",
+      "claim": "Convergence of independent researchers using diverse methods strengthens evidential support for claims",
+      "layer": 2,
+      "searchHints": ["scientific consensus epistemology", "consilience of evidence", "Whewell consilience"],
+      "depends": ["peer_review", "controlled_experiment"]
+    },
+    {
+      "nodeId": "scientific_method_crown",
+      "claim": "The scientific method is the most reliable method for generating knowledge about the natural world",
+      "layer": 3,
+      "searchHints": ["scientific method effectiveness", "science vs other epistemologies", "scientific progress"],
+      "depends": ["scientific_consensus", "bayesian_updating", "falsifiability"]
+    }
+  ],
+  "alternatives": [
+    {
+      "nodeId": "alt_paradigm_shifts",
+      "replacesNodeId": "scientific_consensus",
+      "claim": "Science progresses through revolutionary paradigm shifts, not cumulative progress (Kuhn)",
+      "searchHints": ["Kuhn paradigm shifts", "structure of scientific revolutions", "incommensurability"]
+    },
+    {
+      "nodeId": "alt_underdetermination",
+      "replacesNodeId": "controlled_experiment",
+      "claim": "Evidence always underdetermines theory; multiple incompatible theories can fit the same data",
+      "searchHints": ["Duhem-Quine thesis", "underdetermination of theory", "theory choice"]
+    },
+    {
+      "nodeId": "alt_social_constructivism",
+      "replacesNodeId": "empiricism",
+      "claim": "Scientific knowledge is primarily a social construction, not a discovery of objective truth",
+      "searchHints": ["social constructivism science", "strong programme sociology of knowledge", "Latour"]
+    }
+  ]
+}

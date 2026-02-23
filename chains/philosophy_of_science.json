@@ -1,0 +1,44 @@
+{
+  "id": "philosophy_of_science",
+  "name": "Philosophy of Science",
+  "discipline": "Philosophy of Science",
+  "crownClaim": "The scientific method, combining empiricism with systematic hypothesis testing, is the most reliable method for generating knowledge about the natural world",
+  "nodes": [
+    "philosophy_of_science.empiricism",
+    "philosophy_of_science.falsifiability",
+    "philosophy_of_science.controlled_experiment",
+    "philosophy_of_science.peer_review",
+    "philosophy_of_science.bayesian_updating",
+    "philosophy_of_science.scientific_consensus",
+    "philosophy_of_science.scientific_method_crown"
+  ],
+  "edges": [
+    {"source": "philosophy_of_science.empiricism", "target": "philosophy_of_science.controlled_experiment", "type": "depends"},
+    {"source": "philosophy_of_science.empiricism", "target": "philosophy_of_science.peer_review", "type": "depends"},
+    {"source": "philosophy_of_science.falsifiability", "target": "philosophy_of_science.peer_review", "type": "depends"},
+    {"source": "philosophy_of_science.peer_review", "target": "philosophy_of_science.scientific_consensus", "type": "depends"},
+    {"source": "philosophy_of_science.controlled_experiment", "target": "philosophy_of_science.scientific_consensus", "type": "depends"},
+    {"source": "philosophy_of_science.scientific_consensus", "target": "philosophy_of_science.scientific_method_crown", "type": "depends"},
+    {"source": "philosophy_of_science.bayesian_updating", "target": "philosophy_of_science.scientific_method_crown", "type": "depends"},
+    {"source": "philosophy_of_science.falsifiability", "target": "philosophy_of_science.scientific_method_crown", "type": "depends"},
+    {"source": "epistemic_foundations.perception_reliability", "target": "philosophy_of_science.empiricism", "type": "depends"},
+    {"source": "epistemic_foundations.inductive_reasoning", "target": "philosophy_of_science.bayesian_updating", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "philosophy_of_science.alt_paradigm_shifts",
+      "replacesNodeId": "philosophy_of_science.scientific_consensus",
+      "claim": "Science progresses through revolutionary paradigm shifts, not cumulative progress (Kuhn)"
+    },
+    {
+      "id": "philosophy_of_science.alt_underdetermination",
+      "replacesNodeId": "philosophy_of_science.controlled_experiment",
+      "claim": "Evidence always underdetermines theory; multiple incompatible theories can fit the same data"
+    },
+    {
+      "id": "philosophy_of_science.alt_social_constructivism",
+      "replacesNodeId": "philosophy_of_science.empiricism",
+      "claim": "Scientific knowledge is primarily a social construction, not a discovery of objective truth"
+    }
+  ]
+}

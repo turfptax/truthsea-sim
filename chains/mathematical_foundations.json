@@ -1,0 +1,37 @@
+{
+  "id": "mathematical_foundations",
+  "name": "Mathematical Foundations",
+  "discipline": "Mathematics / Philosophy",
+  "crownClaim": "Mathematical reasoning provides a consistent, formal framework for deriving necessary truths from axioms, applicable to modeling physical reality",
+  "nodes": [
+    "mathematical_foundations.peano_axioms",
+    "mathematical_foundations.set_theory_zfc",
+    "mathematical_foundations.proof_validity",
+    "mathematical_foundations.incompleteness",
+    "mathematical_foundations.mathematical_modeling",
+    "mathematical_foundations.math_crown"
+  ],
+  "edges": [
+    {"source": "mathematical_foundations.peano_axioms", "target": "mathematical_foundations.proof_validity", "type": "depends"},
+    {"source": "mathematical_foundations.peano_axioms", "target": "mathematical_foundations.incompleteness", "type": "depends"},
+    {"source": "mathematical_foundations.proof_validity", "target": "mathematical_foundations.incompleteness", "type": "depends"},
+    {"source": "mathematical_foundations.proof_validity", "target": "mathematical_foundations.mathematical_modeling", "type": "depends"},
+    {"source": "mathematical_foundations.mathematical_modeling", "target": "mathematical_foundations.math_crown", "type": "depends"},
+    {"source": "mathematical_foundations.incompleteness", "target": "mathematical_foundations.math_crown", "type": "depends"},
+    {"source": "epistemic_foundations.law_of_noncontradiction", "target": "mathematical_foundations.set_theory_zfc", "type": "depends"},
+    {"source": "epistemic_foundations.deductive_validity", "target": "mathematical_foundations.proof_validity", "type": "depends"},
+    {"source": "epistemic_foundations.inductive_reasoning", "target": "mathematical_foundations.mathematical_modeling", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "mathematical_foundations.alt_formalism_only",
+      "replacesNodeId": "mathematical_foundations.mathematical_modeling",
+      "claim": "Mathematics is purely formal symbol manipulation with no necessary connection to physical reality"
+    },
+    {
+      "id": "mathematical_foundations.alt_intuitionism",
+      "replacesNodeId": "mathematical_foundations.set_theory_zfc",
+      "claim": "Classical logic (law of excluded middle) should be rejected; only constructive proofs are valid"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "epistemic_foundations",
+  "name": "Epistemic Foundations",
+  "discipline": "Philosophy / Epistemology",
+  "crownClaim": "Human knowledge acquisition through logic, perception, and induction is reliable enough to produce justified true beliefs about an external reality",
+  "instructions": "Research each claim below. These are philosophical foundations -- some are axioms that cannot be empirically verified but are pragmatically indispensable. Score correspondence honestly (low for axioms). Focus evidence on SEP articles, key philosophical works, and psychophysics research where applicable.",
+  "claims": [
+    {
+      "nodeId": "external_world",
+      "claim": "An external reality exists independent of any observer's mind",
+      "layer": 0,
+      "searchHints": ["metaphysical realism SEP", "external world problem philosophy", "Moore proof external world"],
+      "depends": []
+    },
+    {
+      "nodeId": "law_of_noncontradiction",
+      "claim": "A proposition and its negation cannot both be true simultaneously in the same respect",
+      "layer": 0,
+      "searchHints": ["law of non-contradiction Aristotle", "dialetheism Graham Priest", "classical logic foundations"],
+      "depends": []
+    },
+    {
+      "nodeId": "perception_reliability",
+      "claim": "Human sensory perception, while fallible, systematically tracks features of external reality",
+      "layer": 0,
+      "searchHints": ["psychophysics reliability perception", "Weber-Fechner law", "perceptual realism epistemology"],
+      "depends": []
+    },
+    {
+      "nodeId": "inductive_reasoning",
+      "claim": "Observed regularities in nature can be extrapolated to unobserved cases with justified (though defeasible) confidence",
+      "layer": 1,
+      "searchHints": ["problem of induction Hume", "inductive reasoning justification", "Bayesian epistemology"],
+      "depends": ["external_world", "perception_reliability"]
+    },
+    {
+      "nodeId": "deductive_validity",
+      "claim": "Valid deductive arguments preserve truth from premises to conclusions",
+      "layer": 1,
+      "searchHints": ["deductive reasoning validity", "logical consequence SEP", "formal proof theory"],
+      "depends": ["law_of_noncontradiction"]
+    },
+    {
+      "nodeId": "justified_true_belief",
+      "claim": "Knowledge can be characterized as justified, true belief, subject to Gettier-type refinements",
+      "layer": 2,
+      "searchHints": ["justified true belief Gettier", "epistemology knowledge definition", "reliabilism Goldman"],
+      "depends": ["perception_reliability", "inductive_reasoning", "deductive_validity"]
+    },
+    {
+      "nodeId": "epistemic_crown",
+      "claim": "Human knowledge acquisition through logic, perception, and induction is reliable enough to produce justified true beliefs about an external reality",
+      "layer": 3,
+      "searchHints": ["epistemology overview", "rational knowledge acquisition", "scientific epistemology reliability"],
+      "depends": ["justified_true_belief", "inductive_reasoning"]
+    }
+  ],
+  "alternatives": [
+    {
+      "nodeId": "alt_solipsism",
+      "replacesNodeId": "external_world",
+      "claim": "Only one's own mind can be known to exist; the external world may be an illusion",
+      "searchHints": ["solipsism philosophy", "brain in vat", "simulation hypothesis"]
+    },
+    {
+      "nodeId": "alt_radical_skepticism",
+      "replacesNodeId": "perception_reliability",
+      "claim": "Systematic deception (evil demon, simulation) makes all sensory evidence unreliable",
+      "searchHints": ["Cartesian skepticism", "radical skepticism", "Descartes evil demon"]
+    },
+    {
+      "nodeId": "alt_problem_of_induction",
+      "replacesNodeId": "inductive_reasoning",
+      "claim": "No amount of past observation can logically justify predictions about unobserved cases (Hume's problem remains unsolved)",
+      "searchHints": ["Hume problem of induction", "new riddle of induction Goodman", "induction unsolved"]
+    }
+  ]
+}
