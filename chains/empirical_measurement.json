@@ -1,0 +1,37 @@
+{
+  "id": "empirical_measurement",
+  "name": "Empirical Measurement",
+  "discipline": "Metrology / Science",
+  "crownClaim": "Standardized measurement with quantified uncertainty enables reproducible empirical science across all disciplines",
+  "nodes": [
+    "empirical_measurement.si_units",
+    "empirical_measurement.measurement_uncertainty",
+    "empirical_measurement.reproducibility",
+    "empirical_measurement.radiometric_dating",
+    "empirical_measurement.historical_record",
+    "empirical_measurement.empirical_measurement_crown"
+  ],
+  "edges": [
+    {"source": "empirical_measurement.si_units", "target": "empirical_measurement.reproducibility", "type": "depends"},
+    {"source": "empirical_measurement.measurement_uncertainty", "target": "empirical_measurement.reproducibility", "type": "depends"},
+    {"source": "empirical_measurement.measurement_uncertainty", "target": "empirical_measurement.radiometric_dating", "type": "depends"},
+    {"source": "empirical_measurement.radiometric_dating", "target": "empirical_measurement.historical_record", "type": "depends"},
+    {"source": "empirical_measurement.reproducibility", "target": "empirical_measurement.empirical_measurement_crown", "type": "depends"},
+    {"source": "empirical_measurement.historical_record", "target": "empirical_measurement.empirical_measurement_crown", "type": "depends"},
+    {"source": "philosophy_of_science.empiricism", "target": "empirical_measurement.si_units", "type": "depends"},
+    {"source": "philosophy_of_science.controlled_experiment", "target": "empirical_measurement.measurement_uncertainty", "type": "depends"},
+    {"source": "physical_reality.uniformity_of_nature", "target": "empirical_measurement.radiometric_dating", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "empirical_measurement.alt_measurement_problem",
+      "replacesNodeId": "empirical_measurement.measurement_uncertainty",
+      "claim": "Measurement fundamentally disturbs the system being measured (quantum measurement problem), making objective measurement impossible at fundamental scales"
+    },
+    {
+      "id": "empirical_measurement.alt_historical_skepticism",
+      "replacesNodeId": "empirical_measurement.historical_record",
+      "claim": "Written historical records are systematically biased by power structures and cannot provide reliable knowledge of the past"
+    }
+  ]
+}

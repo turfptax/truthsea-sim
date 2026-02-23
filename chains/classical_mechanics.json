@@ -1,0 +1,41 @@
+{
+  "id": "classical_mechanics",
+  "name": "Classical Mechanics",
+  "discipline": "Physics",
+  "crownClaim": "Newton's laws of motion and universal gravitation accurately describe macroscopic physical interactions at non-relativistic speeds",
+  "nodes": [
+    "classical_mechanics.inertia",
+    "classical_mechanics.force_acceleration",
+    "classical_mechanics.action_reaction",
+    "classical_mechanics.universal_gravitation",
+    "classical_mechanics.noether_conservation",
+    "classical_mechanics.orbital_mechanics",
+    "classical_mechanics.classical_mechanics_crown"
+  ],
+  "edges": [
+    {"source": "classical_mechanics.inertia", "target": "classical_mechanics.force_acceleration", "type": "supports"},
+    {"source": "classical_mechanics.force_acceleration", "target": "classical_mechanics.universal_gravitation", "type": "depends"},
+    {"source": "classical_mechanics.force_acceleration", "target": "classical_mechanics.noether_conservation", "type": "depends"},
+    {"source": "classical_mechanics.universal_gravitation", "target": "classical_mechanics.orbital_mechanics", "type": "depends"},
+    {"source": "classical_mechanics.inertia", "target": "classical_mechanics.orbital_mechanics", "type": "depends"},
+    {"source": "classical_mechanics.orbital_mechanics", "target": "classical_mechanics.classical_mechanics_crown", "type": "depends"},
+    {"source": "classical_mechanics.noether_conservation", "target": "classical_mechanics.classical_mechanics_crown", "type": "depends"},
+    {"source": "classical_mechanics.action_reaction", "target": "classical_mechanics.classical_mechanics_crown", "type": "depends"},
+    {"source": "physical_reality.causality", "target": "classical_mechanics.inertia", "type": "depends"},
+    {"source": "physical_reality.conservation_principles", "target": "classical_mechanics.noether_conservation", "type": "depends"},
+    {"source": "calculus_foundations.derivatives", "target": "classical_mechanics.force_acceleration", "type": "depends"},
+    {"source": "calculus_foundations.fundamental_theorem", "target": "classical_mechanics.orbital_mechanics", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "classical_mechanics.alt_relativistic_limit",
+      "replacesNodeId": "classical_mechanics.classical_mechanics_crown",
+      "claim": "Newton's laws are only an approximation; general relativity supersedes them for strong gravity and high speeds"
+    },
+    {
+      "id": "classical_mechanics.alt_quantum_limit",
+      "replacesNodeId": "classical_mechanics.force_acceleration",
+      "claim": "F=ma breaks down at quantum scales where uncertainty and wave-particle duality dominate"
+    }
+  ]
+}

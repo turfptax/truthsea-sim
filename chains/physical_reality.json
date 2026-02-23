@@ -1,0 +1,39 @@
+{
+  "id": "physical_reality",
+  "name": "Physical Reality",
+  "discipline": "Physics / Philosophy",
+  "crownClaim": "The physical universe has a consistent, observer-independent structure governed by discoverable, universal laws",
+  "nodes": [
+    "physical_reality.object_permanence",
+    "physical_reality.spacetime_structure",
+    "physical_reality.causality",
+    "physical_reality.uniformity_of_nature",
+    "physical_reality.conservation_principles",
+    "physical_reality.physical_law_discovery",
+    "physical_reality.physical_reality_crown"
+  ],
+  "edges": [
+    {"source": "physical_reality.spacetime_structure", "target": "physical_reality.causality", "type": "depends"},
+    {"source": "physical_reality.uniformity_of_nature", "target": "physical_reality.conservation_principles", "type": "depends"},
+    {"source": "physical_reality.spacetime_structure", "target": "physical_reality.conservation_principles", "type": "depends"},
+    {"source": "physical_reality.causality", "target": "physical_reality.physical_law_discovery", "type": "depends"},
+    {"source": "physical_reality.conservation_principles", "target": "physical_reality.physical_law_discovery", "type": "depends"},
+    {"source": "physical_reality.object_permanence", "target": "physical_reality.physical_law_discovery", "type": "depends"},
+    {"source": "physical_reality.physical_law_discovery", "target": "physical_reality.physical_reality_crown", "type": "depends"},
+    {"source": "epistemic_foundations.external_world", "target": "physical_reality.object_permanence", "type": "depends"},
+    {"source": "epistemic_foundations.perception_reliability", "target": "physical_reality.object_permanence", "type": "depends"},
+    {"source": "epistemic_foundations.inductive_reasoning", "target": "physical_reality.uniformity_of_nature", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "physical_reality.alt_idealism",
+      "replacesNodeId": "physical_reality.object_permanence",
+      "claim": "Objects exist only as perceptions in minds; there is no mind-independent material substance (Berkeley)"
+    },
+    {
+      "id": "physical_reality.alt_discrete_spacetime",
+      "replacesNodeId": "physical_reality.spacetime_structure",
+      "claim": "Spacetime is fundamentally discrete at the Planck scale, not continuous (loop quantum gravity)"
+    }
+  ]
+}

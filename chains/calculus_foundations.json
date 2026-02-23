@@ -1,0 +1,36 @@
+{
+  "id": "calculus_foundations",
+  "name": "Calculus Foundations",
+  "discipline": "Mathematics",
+  "crownClaim": "Calculus provides rigorous, proven methods for analyzing continuous change, foundational to all quantitative science",
+  "nodes": [
+    "calculus_foundations.real_number_continuum",
+    "calculus_foundations.limits",
+    "calculus_foundations.derivatives",
+    "calculus_foundations.integration",
+    "calculus_foundations.fundamental_theorem",
+    "calculus_foundations.calculus_crown"
+  ],
+  "edges": [
+    {"source": "calculus_foundations.real_number_continuum", "target": "calculus_foundations.limits", "type": "depends"},
+    {"source": "calculus_foundations.limits", "target": "calculus_foundations.derivatives", "type": "depends"},
+    {"source": "calculus_foundations.limits", "target": "calculus_foundations.integration", "type": "depends"},
+    {"source": "calculus_foundations.derivatives", "target": "calculus_foundations.fundamental_theorem", "type": "depends"},
+    {"source": "calculus_foundations.integration", "target": "calculus_foundations.fundamental_theorem", "type": "depends"},
+    {"source": "calculus_foundations.fundamental_theorem", "target": "calculus_foundations.calculus_crown", "type": "depends"},
+    {"source": "mathematical_foundations.peano_axioms", "target": "calculus_foundations.real_number_continuum", "type": "depends"},
+    {"source": "mathematical_foundations.proof_validity", "target": "calculus_foundations.fundamental_theorem", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "calculus_foundations.alt_nonstandard_analysis",
+      "replacesNodeId": "calculus_foundations.limits",
+      "claim": "Infinitesimals (not epsilon-delta limits) provide the true foundation for calculus (Robinson's nonstandard analysis)"
+    },
+    {
+      "id": "calculus_foundations.alt_constructive_analysis",
+      "replacesNodeId": "calculus_foundations.real_number_continuum",
+      "claim": "Only constructively definable real numbers exist; the classical continuum is an idealization (Bishop's constructive analysis)"
+    }
+  ]
+}

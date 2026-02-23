@@ -37,16 +37,21 @@ chains/             # Local chain data (JSON + JSONL pairs, importable)
   philosophy_of_science.json + .jsonl
   mathematical_foundations.json + .jsonl
   consciousness_foundations.json + .jsonl
+  physical_reality.json + .jsonl
+  classical_mechanics.json + .jsonl
+  calculus_foundations.json + .jsonl
+  empirical_measurement.json + .jsonl
+  logic_and_proof.json + .jsonl
 missions/           # Mission templates for external AI agents
 visualizer/         # 3D interactive graph visualizer (Vite + 3d-force-graph)
 output/             # Generated PNGs and CSVs from scenarios
 ```
 
 ## Data Model
-- **chain_definition** — 24 chains (20 science + 4 coherence theory) across 18 disciplines
-- **chain_node** — 176 quanta + 50 alternatives (layer -1). Each has 4 pillar scores (0-100), 8 moral vector dimensions, intrinsic/chain scores
-- **evidence_source** — 525 evidence items linked to quanta
-- **chain_edge** — 212 DAG edges (depends, supports, contradicts)
+- **chain_definition** — 29 chains (20 science + 9 foundational) across 20 disciplines
+- **chain_node** — 208 quanta + 57 alternatives (layer -1). Each has 4 pillar scores (0-100), 8 moral vector dimensions, intrinsic/chain scores
+- **evidence_source** — 577 evidence items linked to quanta
+- **chain_edge** — 261 DAG edges (depends, supports, contradicts)
 - **agent** — simulation agents with stake, reputation, accuracy tracking
 - **verification** — agent verdicts (accept/reject/flag) per quanta per round
 - **simulation_run** — run config + summary JSON
@@ -100,15 +105,24 @@ python scenarios/sabotage_test.py [--target ID] [--csv FILE]  # Batch sabotage
 Data format follows the agent-toolkit schema (see `../TruthSea/agent-toolkit/SCHEMA.md`).
 Import uses upsert — re-importing updated data overwrites existing records.
 
-## Coherence Theory Chains
-4 foundational chains forming the epistemological bedrock:
+## Foundational Chains
+9 foundational chains forming the epistemological and scientific bedrock:
+
+**Epistemological bedrock (4 chains):**
 - **epistemic_foundations** — external world, logic, perception, induction, JTB
 - **philosophy_of_science** — empiricism, falsifiability, experiments, peer review, scientific method
 - **mathematical_foundations** — Peano axioms, ZFC, proof validity, Goedel incompleteness, mathematical modeling
 - **consciousness_foundations** — qualia, neural correlates, psychophysics, hard problem
 
+**First-principles science (5 chains):**
+- **physical_reality** — object permanence, spacetime 3+1, causality, uniformity of nature, conservation laws
+- **classical_mechanics** — Newton's 3 laws, universal gravitation, Noether conservation, orbital mechanics
+- **calculus_foundations** — real numbers, limits, derivatives, integration, fundamental theorem
+- **empirical_measurement** — SI units, measurement uncertainty, reproducibility, radiometric dating, historical record
+- **logic_and_proof** — propositional logic, predicate logic, proof by contradiction, mathematical induction, completeness
+
 Axioms (e.g. "external world exists") score naturally: low correspondence (~15, can't empirically prove), high coherence/pragmatism (~85-95). The lens system reveals sensitivity — a scientist lens penalizes axioms more.
-Cross-chain dependencies link these to each other (e.g. philosophy_of_science.empiricism depends on epistemic_foundations.perception_reliability).
+Cross-chain dependencies link chains together (e.g. classical_mechanics.force_acceleration depends on calculus_foundations.derivatives and physical_reality.causality).
 
 ## Key Design Decisions
 - Core: stdlib only (sqlite3, json, csv, argparse, random, math). matplotlib is optional (used for sabotage scenario plots)

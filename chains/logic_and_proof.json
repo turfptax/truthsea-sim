@@ -1,0 +1,38 @@
+{
+  "id": "logic_and_proof",
+  "name": "Logic and Proof",
+  "discipline": "Mathematics / Logic",
+  "crownClaim": "Formal logical systems provide reliable, mechanically verifiable methods for establishing necessary truths and valid inference",
+  "nodes": [
+    "logic_and_proof.propositional_logic",
+    "logic_and_proof.predicate_logic",
+    "logic_and_proof.proof_by_contradiction",
+    "logic_and_proof.mathematical_induction",
+    "logic_and_proof.completeness_theorem",
+    "logic_and_proof.logic_crown"
+  ],
+  "edges": [
+    {"source": "logic_and_proof.propositional_logic", "target": "logic_and_proof.predicate_logic", "type": "depends"},
+    {"source": "logic_and_proof.propositional_logic", "target": "logic_and_proof.proof_by_contradiction", "type": "depends"},
+    {"source": "logic_and_proof.predicate_logic", "target": "logic_and_proof.mathematical_induction", "type": "depends"},
+    {"source": "logic_and_proof.predicate_logic", "target": "logic_and_proof.completeness_theorem", "type": "depends"},
+    {"source": "logic_and_proof.proof_by_contradiction", "target": "logic_and_proof.completeness_theorem", "type": "depends"},
+    {"source": "logic_and_proof.completeness_theorem", "target": "logic_and_proof.logic_crown", "type": "depends"},
+    {"source": "logic_and_proof.mathematical_induction", "target": "logic_and_proof.logic_crown", "type": "depends"},
+    {"source": "epistemic_foundations.law_of_noncontradiction", "target": "logic_and_proof.propositional_logic", "type": "depends"},
+    {"source": "epistemic_foundations.deductive_validity", "target": "logic_and_proof.proof_by_contradiction", "type": "depends"},
+    {"source": "mathematical_foundations.peano_axioms", "target": "logic_and_proof.mathematical_induction", "type": "depends"}
+  ],
+  "alternatives": [
+    {
+      "id": "logic_and_proof.alt_paraconsistent",
+      "replacesNodeId": "logic_and_proof.proof_by_contradiction",
+      "claim": "Proof by contradiction is invalid because some contradictions may be true; paraconsistent logic is more fundamental"
+    },
+    {
+      "id": "logic_and_proof.alt_second_order",
+      "replacesNodeId": "logic_and_proof.completeness_theorem",
+      "claim": "First-order logic is too weak; second-order logic is needed but sacrifices completeness for expressiveness"
+    }
+  ]
+}
